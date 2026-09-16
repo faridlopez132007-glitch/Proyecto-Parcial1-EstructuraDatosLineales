@@ -1,0 +1,55 @@
+
+import Clases
+import time
+import random
+
+t0 = time.perf_counter()
+
+def tiempo_transcurrido(t1):
+    return (t1 - t0)//60
+
+def pacientes_aleatorios(cantidad):
+    lista = Clases.ListaEnlazada()
+    for i in range(cantidad):
+        time.sleep(random.uniform(0.1, 0.5))  # Simula un tiempo de llegada aleatorio entre pacientes
+        documento = random.randint(10000000, 99999999)
+        nombre = random.choice(["Juan", "María", "Pedro", "Ana", "Luis", "Sofía", "Carlos", "Valentina"]) + " " + random.choice(["García", "Rodríguez", "Martínez", "López", "Hernández"])
+        edad = random.randint(18, 80)
+        """motivo = random.choice(["Dolor de cabeza", "Fiebre", "Dolor abdominal", "Lesión deportiva", "Corte profundo"]) #Crear funcion para generar motivos aleatorios segun el nivel de triage
+        nivel_triage = random.randint(1, 5)"""
+        motivo, nivel_triage = random.choice([
+    # Nivel 1: Resucitación / Reanimación (Atención inmediata)
+    ("Paro cardiorrespiratorio", 1),
+    ("Dificultad respiratoria severa", 1),
+    ("Traumatismo craneal grave con pérdida de conciencia", 1),
+    ("Hemorragia masiva incontrolable", 1),
+
+    # Nivel 2: Emergencia / Muy urgente
+    ("Dolor torácico opresivo", 2),
+    ("Corte profundo con sangrado activo", 2),
+    ("Dolor abdominal agudo e intenso", 2),
+    ("Quemadura extensa de segundo o tercer grado", 2),
+
+    # Nivel 3: Urgencia / Urgente
+    ("Fiebre alta persistente con escalofríos", 3),
+    ("Sospecha de fractura o luxación en extremidad", 3),
+    ("Crisis asmática moderada", 3),
+    ("Reacción alérgica moderada sin compromiso de vía aérea", 3),
+
+    # Nivel 4: Menor urgencia / Poco urgente
+    ("Esguince leve o lesión deportiva", 4),
+    ("Corte superficial o laceración pequeña", 4),
+    ("Dolor de cabeza moderado sin signos de alarma", 4),
+    ("Infección urinaria o molestia al orinar", 4),
+
+    # Nivel 5: No urgente
+    ("Dolor de cabeza leve o crónico", 5),
+    ("Resfriado común o congestión nasal", 5),
+    ("Solicitud o renovación de receta médica", 5),
+    ("Retiro de puntos de sutura", 5)
+]) 
+        hora_llegada = tiempo_transcurrido(time.perf_counter())
+        paciente = Clases.Paciente(documento, nombre, edad, motivo, nivel_triage, hora_llegada)
+        lista.registrar_paciente(paciente)
+
+    return lista
