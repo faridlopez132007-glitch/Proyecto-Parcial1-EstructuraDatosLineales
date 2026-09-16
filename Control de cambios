@@ -1,0 +1,15 @@
+""" 
+================================================================ 
+ Asignatura : SIST0027 · Estructuras de Datos Lineales · G03 
+ Actividad  : Taller Parcial 01 — Listas  
+ Autor(es)  : M. David y L. Farid
+ Fecha      : 2026-09-16 
+ Versión    : 1.2 
+---------------------------------------------------------------- 
+ CONTROL DE CAMBIOS 
+ Ver.  Fecha        Autor        Descripción 
+ 1.0   2026-09-13   L. Farid     Versión inicial del Parcial. Creación del modulo de clases.
+ 1.1   2026-09-14   M. David     Se crearon los módulos Funciones, copia de seguridad y main.
+ 1.2   2026-09-16   L. Farid     Implementación del método dar de alta, lógica para deshacer acciones, búsqueda, recursividad y pruebas main
+================================================================ 
+"""
