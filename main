@@ -1,0 +1,80 @@
+import Clases
+import Funciones
+
+def main():
+# Creamos la lista enlazada para manejar los pacientes del hospital y la pila para guardar el historial de acciones.
+    lista = Clases.ListaEnlazada()
+    historial = Clases.PilaEnlazada()
+
+    print("="*50)
+    print(" FASE 1: EVALUACIÓN ESTRICTA DEL CORTE")
+    print("="*50)
+    
+    # REQUISITO 1: Registrar pacientes
+# Creamos los tres pacientes obligatorios que pide el ejercicio con sus datos quemados.
+    p1 = Clases.Paciente(111, "Ana Lopez", 30, "Dolor cabeza", 3, 10)
+    lista.registrar_paciente(p1)
+# Después de registrar al paciente, apilamos un diccionario en el historial indicando que la acción fue "registrar" y guardando los datos de ese paciente.
+    historial.apilar({"accion": "registrar", "paciente": p1})
+
+    p2 = Clases.Paciente(222, "Luis Perez", 45, "Infarto", 1, 15)
+    lista.registrar_paciente(p2)
+    historial.apilar({"accion": "registrar", "paciente": p2})
+
+    p3 = Clases.Paciente(333, "Marta Diaz", 28, "Fiebre leve", 3, 20)
+    lista.registrar_paciente(p3)
+    historial.apilar({"accion": "registrar", "paciente": p3})
+
+    # REQUISITO 2: Listar pacientes
+# Mostramos en consola cómo quedó la lista inicial con los 3 pacientes que acabamos de registrar.
+    print("\n--- LISTA INICIAL ---")
+    lista.mostrar_pacientes()
+
+    # REQUISITO 4: Buscar documento 222
+# Llamamos al método de buscar pasándole el documento 222 para verificar que lo encuentre y nos diga cuántas comparaciones costó.
+    print("\n--- BÚSQUEDA POR DOCUMENTO ---")
+    lista.buscar_por_documento(222)
+
+    # REQUISITO 3: Dar de alta documento 111
+# Intentamos dar de alta (eliminar) al paciente con documento 111.
+    print("\n--- DAR DE ALTA ---")
+    paciente_eliminado = lista.dar_de_alta(111)
+# Si logramos darlo de alta (la función no devuelve None), guardamos esta acción en la pila como "dar_alta".
+    if paciente_eliminado is not None:
+        historial.apilar({"accion": "dar_alta", "paciente": paciente_eliminado})
+    
+# Mostramos la lista para comprobar que el paciente 111 ya no está.
+    print("\n--- LISTA TRAS EL ALTA ---")
+    lista.mostrar_pacientes()
+
+    # REQUISITO 5: Deshacer usando el módulo de funciones
+# Llamamos a la función de deshacer que importamos del módulo de funciones. Esta sacará la última acción de la pila y hará lo contrario (como la última fue dar de alta, ahora lo volverá a registrar).
+    print("\n--- DESHACER ÚLTIMA ACCIÓN ---")
+    Funciones.deshacer_ultima_accion(lista, historial)
+    
+# Mostramos la lista para comprobar que el paciente 111 regresó a la fila.
+    print("\n--- LISTA TRAS DESHACER ---")
+    lista.mostrar_pacientes()
+
+    # REQUISITO 6: Recursividad
+# Llamamos al método recursivo pasándole la cabeza de la lista (para que empiece a buscar desde el principio) y el número 3, para que cuente cuántos tienen ese triage.
+    print("\n--- REPORTE RECURSIVO ---")
+    total_triage_3 = lista.contar_pacientes_por_nivel_triage(lista.cabeza, 3)
+    print(f"Total de pacientes con Triage nivel 3: {total_triage_3}")
+
+
+    print("\n" + "="*50)
+    print(" FASE 2: PRUEBA DE CARGA (SIMULACIÓN ALEATORIA)")
+    print("="*50)
+    print("\nGenerando 4 pacientes aleatorios adicionales...")
+    
+    # Usamos la función importada para generar los datos extra
+# Llamamos a la función aleatoria. Le pasamos nuestra lista actual, le pedimos 4 pacientes más, y le decimos que empiece a sumar el tiempo desde el minuto 20 (cuando llegó el último).
+    Funciones.generar_pacientes_aleatorios(lista, 4, 20)
+    
+# Mostramos la lista final donde se verán los pacientes quemados junto con los nuevos que entraron aleatoriamente.
+    print("\n--- LISTA FINAL DEL HOSPITAL ---")
+    lista.mostrar_pacientes()
+
+if __name__ == "__main__":
+    main()
