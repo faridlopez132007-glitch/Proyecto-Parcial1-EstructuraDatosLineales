@@ -1,51 +1,83 @@
-
+"""
+Módulo Funciones: Lógica auxiliar para generación de datos y control de historial.
+"""
 import Clases
-#import time
 import random
 
-def pacientes_aleatorios(cantidad):
-    tiempo_transcurrido = 0
-    lista = Clases.ListaEnlazada()
-    for i in range(cantidad):
-        tiempo_transcurrido += random.randint(5, 15)          
-        documento = random.randint(10000000, 99999999)
-        nombre = random.choice(["Juan", "María", "Pedro", "Ana", "Luis", "Sofía", "Carlos", "Valentina"]) + " " + random.choice(["García", "Rodríguez", "Martínez", "López", "Hernández"])
-        edad = random.randint(18, 80)
-        """motivo = random.choice(["Dolor de cabeza", "Fiebre", "Dolor abdominal", "Lesión deportiva", "Corte profundo"]) #Crear funcion para generar motivos aleatorios segun el nivel de triage
-        nivel_triage = random.randint(1, 5)"""
-        motivo, nivel_triage = random.choice([
-    # Nivel 1: Resucitación / Reanimación (Atención inmediata)
+nombres = ["Juan", "María", "Pedro", "Ana", "Luis", "Sofía", "Carlos", "Valentina"]
+apellidos = ["García", "Rodríguez", "Martínez", "López", "Hernández", "Montero"]
+
+opciones_triage = [
     ("Paro cardiorrespiratorio", 1),
     ("Dificultad respiratoria severa", 1),
     ("Traumatismo craneal grave con pérdida de conciencia", 1),
     ("Hemorragia masiva incontrolable", 1),
-
-    # Nivel 2: Emergencia / Muy urgente
     ("Dolor torácico opresivo", 2),
     ("Corte profundo con sangrado activo", 2),
     ("Dolor abdominal agudo e intenso", 2),
     ("Quemadura extensa de segundo o tercer grado", 2),
-
-    # Nivel 3: Urgencia / Urgente
     ("Fiebre alta persistente con escalofríos", 3),
     ("Sospecha de fractura o luxación en extremidad", 3),
     ("Crisis asmática moderada", 3),
     ("Reacción alérgica moderada sin compromiso de vía aérea", 3),
-
-    # Nivel 4: Menor urgencia / Poco urgente
     ("Esguince leve o lesión deportiva", 4),
     ("Corte superficial o laceración pequeña", 4),
     ("Dolor de cabeza moderado sin signos de alarma", 4),
     ("Infección urinaria o molestia al orinar", 4),
-
-    # Nivel 5: No urgente
     ("Dolor de cabeza leve o crónico", 5),
     ("Resfriado común o congestión nasal", 5),
     ("Solicitud o renovación de receta médica", 5),
     ("Retiro de puntos de sutura", 5)
-]) 
+]
+
+historial = Clases.PilaEnlazada()
+
+def filtrar_triage(niveles):
+    """Filtra las opciones de triage según la lista o tupla de niveles entregada."""
+    return [(motivo, triage) for motivo, triage in opciones_triage if triage in niveles]
+
+def deshacer_ultima_accion(lista, historial):
+    """Revierte el último registro o alta registrado en la pila."""
+    if historial.esta_vacia():
+        print("No hay acciones en el historial.")
+        return
+
+    ultima_accion = historial.desapilar()
+    accion = ultima_accion["accion"]
+    paciente = ultima_accion["paciente"]
+
+    if accion == "dar_alta":
+        lista.registrar_paciente(paciente)
+        print(f"Revertido: Se reincorporó a {paciente.nombre} (Doc: {paciente.documento}).")
+    elif accion == "registrar":
+        lista.dar_de_alta(paciente.documento)
+        print(f"Revertido: Se canceló el registro de {paciente.nombre} (Doc: {paciente.documento}).")
+
+def pacientes_aleatorios(lista, tiempo, ultimo_id, cantidad, random_id, filtro):
+    """Crea pacientes aleatorios y los registra en la lista enlazada."""
+    tiempo_transcurrido = tiempo
+
+    for i in range(cantidad):
+        if random_id:
+            documento = random.randint(10000000, 99999999)
+        else:
+            ultimo_id += 1
+            documento = int(str(ultimo_id) * 3)
+
+        if i < 3 and cantidad == 3:
+            if i % 2 != 0:
+                motivo, nivel_triage = random.choice(filtrar_triage([filtro[0]]))
+            else:
+                motivo, nivel_triage = random.choice(filtrar_triage([filtro[1]]))
+        else:
+            motivo, nivel_triage = random.choice(filtrar_triage(filtro))
+
+        tiempo_transcurrido += random.randint(5, 15)
+        nombre = f"{random.choice(nombres)} {random.choice(apellidos)}"
+        edad = random.randint(18, 80)
         hora_llegada = tiempo_transcurrido
         paciente = Clases.Paciente(documento, nombre, edad, motivo, nivel_triage, hora_llegada)
         lista.registrar_paciente(paciente)
+        historial.apilar({"accion": "registrar", "paciente": paciente})
 
-    return lista
+    return lista, historial, tiempo_transcurrido, ultimo_id
