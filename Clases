@@ -1,32 +1,36 @@
-import time
+"""
+Módulo Clases: Define la estructura de nodos, pacientes, lista enlazada y pila.
+"""
 
 class Nodo:
+    """Nodo individual para listas enlazadas y pilas."""
     def __init__(self, paciente):
-        self.paciente = paciente 
+        self.paciente = paciente
         self.siguiente = None
 
-#informacion del paciente
+
 class Paciente:
+    """Almacena la información de cada paciente."""
     def __init__(self, documento, nombre, edad, motivo, nivel_triage, hora_llegada):
-        self.documento = documento 
+        self.documento = documento
         self.nombre = nombre
         self.edad = edad
-        self.motivo = motivo 
+        self.motivo = motivo
         self.nivel_triage = nivel_triage
-        self.hora_llegada = hora_llegada 
+        self.hora_llegada = hora_llegada
+
 
 class ListaEnlazada:
+    """Estructura de datos lineal para gestionar el registro de pacientes."""
     def __init__(self):
-#si no hay ningun dato en la lista, no hay cabeza y el tamaño es de 0        
         self.cabeza = None
         self.tamaño = 0
 
     def registrar_paciente(self, paciente):
+        """Agrega un nuevo paciente al final de la lista."""
         nuevo_nodo = Nodo(paciente)
-#Si no hay dato que sea como la cabeza entonces el la variable nuevo nodo que usa los datos del paciente se convierte en la cabeza de la lista        
-        if self.cabeza is None:       
+        if self.cabeza is None:
             self.cabeza = nuevo_nodo
-#recorre la lista hasta encontrar el último nodo y agrega el nuevo nodo al final de la lista
         else:
             actual = self.cabeza
             while actual.siguiente is not None:
@@ -35,109 +39,97 @@ class ListaEnlazada:
         self.tamaño += 1
 
     def mostrar_pacientes(self):
-#si la cabeza es nula, significa que no hay pacientes en la lista y se imprime un mensaje indicando eso.        
+        """Imprime todos los pacientes de la lista."""
         if self.cabeza is None:
-            print("No hay pacientes.")
-#despues recorre la lista con la variable actual y muestra la informacion de cada paciente hasta que llegue al final de la lista            
-        else:
-            actual = self.cabeza
-            while actual is not None:
-                paciente = actual.paciente
-                print(f"Documento: {paciente.documento}, Nombre: {paciente.nombre}, Edad: {paciente.edad}, Motivo: {paciente.motivo}, Nivel de Triage: {paciente.nivel_triage}, Hora de llegada: {paciente.hora_llegada}")
-                actual = actual.siguiente
+            print("No hay pacientes registrados.")
+            return
+
+        actual = self.cabeza
+        while actual is not None:
+            p = actual.paciente
+            print(f"Documento: {p.documento}\nNombre: {p.nombre}\nEdad: {p.edad}\nMotivo: {p.motivo}\nTriage: {p.nivel_triage}\nHora de llegada: hace {p.hora_llegada} min\n")
+            actual = actual.siguiente
 
     def buscar_por_documento(self, documento):
-#si la cabeza es nula, significa que no hay pacientes en el registro y se imprime un mensaje indicando eso.
+        """Busca un paciente por su número de documento."""
         if self.cabeza is None:
             print("No hay pacientes en el registro.")
             return None
-#despues avanzamos por la lista con la variable actual y el contador que nos dice la cantidad de nodos recorridos hasta encontrar el paciente con el documento especifico y sino sigue hasta que llegue al final de la lista y nos diga qu eno existe
+
         actual = self.cabeza
         contador = 0
-        
+
         while actual is not None:
             contador += 1
             if actual.paciente.documento == documento:
-                paciente = actual.paciente
+                p = actual.paciente
                 print(f"Paciente encontrado en {contador} comparaciones:")
-                print(f"Documento: {paciente.documento}, Nombre: {paciente.nombre}, Edad: {paciente.edad}, Motivo: {paciente.motivo}, Nivel de Triage: {paciente.nivel_triage}, Hora de llegada: {paciente.hora_llegada}")
-                return paciente
+                print(f"Documento: {p.documento}, Nombre: {p.nombre}, Triage: {p.nivel_triage}")
+                return p
             actual = actual.siguiente
-            
-        print(f"Paciente no encontrado. Total de comparaciones realizadas: {contador}")
+
+        print(f"Paciente no encontrado ({contador} comparaciones realizadas).")
         return None
-        
+
     def dar_de_alta(self, documento):
-# Si la cabeza es nula, significa que la lista está vacía, no hay pacientes para dar de alta y se devuelve None.
+        """Retira a un paciente de la lista por su documento y lo retorna."""
         if self.cabeza is None:
-            print("No hay pacientes para dar de alta.")
             return None
 
-# Si el paciente que queremos dar de alta es el primero de la lista (la cabeza), la nueva cabeza pasa a ser el siguiente nodo. Disminuimos el tamaño en 1.
         if self.cabeza.paciente.documento == documento:
             paciente_alta = self.cabeza.paciente
             self.cabeza = self.cabeza.siguiente
             self.tamaño -= 1
-            print(f"Exitosa: El paciente {paciente_alta.nombre} ha sido dado de alta.")
             return paciente_alta
 
-# Si no es el primero, avanzamos por la lista preguntando al nodo siguiente si tiene el documento que buscamos. 
-# Si coincide, saltamos ese nodo (desenlazándolo) para darlo de alta y disminuimos el tamaño.
         actual = self.cabeza
         while actual.siguiente is not None:
             if actual.siguiente.paciente.documento == documento:
                 paciente_alta = actual.siguiente.paciente
                 actual.siguiente = actual.siguiente.siguiente
                 self.tamaño -= 1
-                print(f"Exitosa: El paciente {paciente_alta.nombre} ha sido dado de alta.")
                 return paciente_alta
-            
             actual = actual.siguiente
 
-# Si recorremos toda la lista y no lo encontramos, imprimimos que falló.
-        print(f"Fallida: No se encontró ningún paciente con el documento {documento}.")
         return None
 
     def contar_pacientes_por_nivel_triage(self, nodo_actual, nivel_triage):
-#si el nodo actual es nulo, significa que hemos llegado al final de la lista y no hay más pacientes que contar, por lo que se devuelve 0.  
+        """Cuenta de forma recursiva los pacientes según su nivel de triage."""
         if nodo_actual is None:
             return 0
-#Aqui le decimos al primer dato que me diga el de el y le pregunte al siguiente nodo si es igual al nivel de triage que le pasamos, si es asi le sumamos 1 y sino le sumamos 0 y seguimos preguntando hasta que lleguemos al final de la lista.
-        nivel_coincidencia = 1 if nodo_actual.paciente.nivel_triage == nivel_triage else 0
-        return nivel_coincidencia + self.contar_pacientes_por_nivel_triage(nodo_actual.siguiente, nivel_triage)
+        coincidencia = 1 if nodo_actual.paciente.nivel_triage == nivel_triage else 0
+        return coincidencia + self.contar_pacientes_por_nivel_triage(nodo_actual.siguiente, nivel_triage)
+
 
 class PilaEnlazada:
+    """Estructura LIFO para guardar el historial de acciones."""
     def __init__(self):
-#No hay ningun dato en la pila, por lo que la cima es nula y el tamaño es 0
         self.cima = None
-        self.tamaño = 0      
+        self.tamaño = 0
 
     def apilar(self, dato):
-#Creamos un nuevo nodo con los datos (ahora guardamos un diccionario con la accion y el paciente) y aumentamos el tamaño de la pila en 1. 
+        """Inserta un elemento en la cima de la pila."""
         nuevo_nodo = Nodo(dato)
         self.tamaño += 1
         if self.cima is None:
             self.cima = nuevo_nodo
-# Si la cima es nula, significa que la pila está vacía, por lo que el nuevo nodo se convierte en la cima de la pila. Si la pila no está vacía, el nuevo nodo se coloca encima de la cima actual y se actualiza la referencia de la cima para que apunte al nuevo nodo.        
         else:
             nuevo_nodo.siguiente = self.cima
             self.cima = nuevo_nodo
 
     def desapilar(self):
-# Si la cima es nula, significa que la pila está vacía, por lo que no hay ningún paciente que desapilar. En este caso, se devuelve None. 
+        """Extrae y retorna el elemento de la cima."""
         if self.cima is None:
             return None
-# Si la pila no está vacía, se toma el dato de la cima, se actualiza la referencia de la cima para que apunte al siguiente nodo y se disminuye el tamaño de la pila en 1.
-        else:
-            dato = self.cima.paciente
-            self.cima = self.cima.siguiente
-            self.tamaño -= 1
-            return dato
+        dato = self.cima.paciente
+        self.cima = self.cima.siguiente
+        self.tamaño -= 1
+        return dato
 
     def esta_vacia(self):
-# Si la cima es nula, significa que la pila está vacía, por lo que se devuelve True. Si la cima no es nula, significa que hay al menos un paciente en la pila, por lo que se devuelve False.        
+        """Retorna True si la pila no tiene elementos."""
         return self.cima is None
 
     def obtener_tamaño(self):
-#Obtenemos el tamaño de la funcion principal apilar y desapilar, que nos dice cuantos pacientes hay en la pila.        
+        """Retorna la cantidad total de elementos en la pila."""
         return self.tamaño
