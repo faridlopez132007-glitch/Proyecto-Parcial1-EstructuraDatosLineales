@@ -1,11 +1,12 @@
 """
-Módulo Funciones: Lógica auxiliar para generación de datos y control de historial.
+Módulo Funciones: Lógica necesaria para generación de datos y control de historial.
 """
+
 import Clases
 import random
 
-nombres = ["Juan", "María", "Pedro", "Ana", "Luis", "Sofía", "Carlos", "Valentina"]
-apellidos = ["García", "Rodríguez", "Martínez", "López", "Hernández", "Montero"]
+nombres = ["Juan", "María", "Pedro", "Ana", "Luis", "Sofía", "Carlos", "Valentina", "Diego", "Danna", "Farid", "Luna", "Dylan", "Carolina"]
+apellidos = ["García", "Rodríguez", "Martínez", "López", "Hernández", "Montero", "Garzon", "Miranda", "Muñoz", "Chacon", "Jimenez", "Gomez", "Avila", "Hurtado"]
 
 opciones_triage = [
     ("Paro cardiorrespiratorio", 1),
@@ -47,7 +48,8 @@ def deshacer_ultima_accion(lista, historial):
     paciente = ultima_accion["paciente"]
 
     if accion == "dar_alta":
-        lista.registrar_paciente(paciente)
+        posicion = ultima_accion.get("posicion", lista.tamaño) # 
+        lista.insertar(posicion, paciente)
         print(f"Revertido: Se reincorporó a {paciente.nombre} (Doc: {paciente.documento}).")
     elif accion == "registrar":
         lista.dar_de_alta(paciente.documento)
@@ -64,7 +66,7 @@ def pacientes_aleatorios(lista, tiempo, ultimo_id, cantidad, random_id, filtro):
             ultimo_id += 1
             documento = int(str(ultimo_id) * 3)
 
-        if i < 3 and cantidad == 3:
+        if i < 3 and cantidad == 3: 
             if i % 2 != 0:
                 motivo, nivel_triage = random.choice(filtrar_triage([filtro[0]]))
             else:
