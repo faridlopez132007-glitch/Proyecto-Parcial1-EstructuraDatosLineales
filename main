@@ -1,6 +1,7 @@
 """
 Módulo Main: Flujo de ejecución del sistema hospitalario.
 """
+
 import Clases
 import Funciones
 
@@ -22,10 +23,10 @@ def main():
 
     # 4. Dar de alta al paciente 222
     print("\n--- Alta Médica (222) ---")
-    paciente_eliminado = lista.dar_de_alta(222)
+    paciente_eliminado, pos = lista.dar_de_alta(222)
     if paciente_eliminado:
-        historial.apilar({"accion": "dar_alta", "paciente": paciente_eliminado})
-        print(f"Paciente {paciente_eliminado.nombre} dado de alta con éxito.")
+        historial.apilar({"accion": "dar_alta", "paciente": paciente_eliminado, "posicion": pos})
+        print(f"Paciente {paciente_eliminado.nombre} ha sido dado de alta con éxito.")
     else:
         print("No se encontró al paciente.")
 
