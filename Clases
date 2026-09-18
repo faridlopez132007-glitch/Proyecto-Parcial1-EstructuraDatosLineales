@@ -1,5 +1,5 @@
 """
-Módulo Clases: Define la estructura de nodos, pacientes, lista enlazada y pila.
+Módulo Clases.py: Define la estructura de nodos, pacientes, lista enlazada y pila.
 """
 
 class Nodo:
@@ -38,6 +38,22 @@ class ListaEnlazada:
             actual.siguiente = nuevo_nodo
         self.tamaño += 1
 
+    def insertar(self, posicion, paciente):
+        """Inserta un paciente en una posición específica de la lista."""
+        nuevo_nodo = Nodo(paciente)
+        if posicion <= 0 or self.cabeza is None:
+            nuevo_nodo.siguiente = self.cabeza
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            contador = 0
+            while actual.siguiente is not None and contador < posicion - 1:
+                actual = actual.siguiente
+                contador += 1
+            nuevo_nodo.siguiente = actual.siguiente
+            actual.siguiente = nuevo_nodo
+        self.tamaño += 1
+
     def mostrar_pacientes(self):
         """Imprime todos los pacientes de la lista."""
         if self.cabeza is None:
@@ -72,26 +88,28 @@ class ListaEnlazada:
         return None
 
     def dar_de_alta(self, documento):
-        """Retira a un paciente de la lista por su documento y lo retorna."""
+        """Retira a un paciente de la lista por su documento y retorna el paciente junto con su posición."""
         if self.cabeza is None:
-            return None
+            return None, -1
 
         if self.cabeza.paciente.documento == documento:
             paciente_alta = self.cabeza.paciente
             self.cabeza = self.cabeza.siguiente
             self.tamaño -= 1
-            return paciente_alta
+            return paciente_alta, 0
 
         actual = self.cabeza
+        posicion = 1
         while actual.siguiente is not None:
             if actual.siguiente.paciente.documento == documento:
                 paciente_alta = actual.siguiente.paciente
                 actual.siguiente = actual.siguiente.siguiente
                 self.tamaño -= 1
-                return paciente_alta
+                return paciente_alta, posicion
             actual = actual.siguiente
+            posicion += 1
 
-        return None
+        return None, -1
 
     def contar_pacientes_por_nivel_triage(self, nodo_actual, nivel_triage):
         """Cuenta de forma recursiva los pacientes según su nivel de triage."""
